@@ -16,19 +16,21 @@ build:
 requirements:
   host:
     - python
+    - pip
+    - setuptools
   run:
     - python
 
 
 outputs:
   - name: {{ name|lower }}
-    build:
-      script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --no-index --no-compile
+    script: build_base.{{ "bat" if win else "sh" }}
     requirements:
       host:
         - python
         - pip
         - setuptools
+        - wheel
       run:
         - python
 
@@ -82,10 +84,14 @@ outputs:
 about:
   home: https://github.com/sktime/skbase
   summary: Base classes for sklearn-like parametric objects
+  description: |
+    skbase provides base classes for creating scikit-learn-like parametric objects,
+    along with tools to make it easier to build your own packages that follow
+    these design patterns.
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  doc_url: https://skbase.readthedocs.io/en/latest/
+  doc_url: https://skbase.readthedocs.io/
   dev_url: https://github.com/sktime/skbase
 
 extra:
