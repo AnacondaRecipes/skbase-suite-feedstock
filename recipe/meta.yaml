@@ -1,5 +1,5 @@
 {% set name = "scikit-base" %}
-{% set version = "0.13.0" %}
+{% set version = "0.13.1" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -7,31 +7,32 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: 436c26067173a7235c465c64ac105008f6f889f09308c5e4e4a16e21c38c3ddc
+  sha256: 169e5427233f7237b38c7d858bf07b8a86bbf59feccf0708e26dad4ac312c593
 
 build:
-  noarch: python
   number: 0
+  skip: true  # [py>314]
 
 requirements:
   host:
-    - python {{ python_min }}
+    - python
+    - pip
+    - setuptools
   run:
-    - python >={{ python_min }}
+    - python
 
 
 outputs:
   - name: {{ name|lower }}
-    build:
-      noarch: python
-      script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation --no-index --no-compile
+    script: build_base.{{ "bat" if win else "sh" }}
     requirements:
       host:
-        - python {{ python_min }}
+        - python
         - pip
         - setuptools
+        - wheel
       run:
-        - python >={{ python_min }},<3.15
+        - python
 
     test:
       requires:
@@ -41,7 +42,7 @@ outputs:
         - scipy
         - pandas
         - scikit-learn >=0.24.0
-        - python {{ python_min }}
+        - python
       commands:
         - pip check
       imports:
@@ -53,12 +54,11 @@ outputs:
 
   - name: {{ name|lower }}-all-extras
     build:
-      noarch: python
     requirements:
       host:
-        - python {{ python_min }}
+        - python
       run:
-        - python >={{ python_min }},<3.15
+        - python
         - {{ pin_subpackage("scikit-base", exact=True) }}
         - pandas
         - numpy
@@ -79,15 +79,19 @@ outputs:
         - scipy
         - pandas
         - scikit-learn >=0.24.0
-        - python {{ python_min }}
+        - python
 
 about:
   home: https://github.com/sktime/skbase
   summary: Base classes for sklearn-like parametric objects
+  description: |
+    skbase provides base classes for creating scikit-learn-like parametric objects,
+    along with tools to make it easier to build your own packages that follow
+    these design patterns.
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  doc_url: https://skbase.readthedocs.io/en/latest/
+  doc_url: https://skbase.readthedocs.io/
   dev_url: https://github.com/sktime/skbase
 
 extra:
